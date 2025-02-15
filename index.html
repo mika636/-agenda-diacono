@@ -12,21 +12,30 @@
         <h2 class="text-2xl font-bold mb-4">Agendar Diácono</h2>
         <form id="scheduleForm" class="space-y-4">
             <input type="text" id="name" class="w-full p-2 border rounded" placeholder="Nome" required>
-            <select id="date" class="w-full p-2 border rounded" required>
-                <option value="">Selecione uma data</option>
-            </select>
-            <select id="time" class="w-full p-2 border rounded" required>
-                <option value="">Selecione o horário</option>
-                <option value="10:00">10h (Domingo)</option>
-                <option value="19:00">19h (Domingo ou Quinta)</option>
-            </select>
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Agendar</button>
+            <div id="datesContainer">
+                <div class="flex space-x-4 mb-4">
+                    <select class="date w-full p-2 border rounded" required>
+                        <option value="">Selecione uma data</option>
+                    </select>
+                    <select class="time w-full p-2 border rounded" required>
+                        <option value="">Selecione o horário</option>
+                        <option value="10:00">10h (Domingo)</option>
+                        <option value="19:00">19h (Domingo ou Quinta)</option>
+                    </select>
+                    <button type="button" class="removeButton text-red-500 p-2">Remover</button>
+                </div>
+            </div>
+            <button type="button" id="addSchedule" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Adicionar Novo Agendamento</button>
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mt-4">Agendar</button>
         </form>
         <div id="calendar" class="mt-6"></div>
+        <div id="confirmationMessage" class="mt-4 text-center text-green-500 font-bold hidden">
+            Deus abençoa sua vida, pela dedicação! 🙏✨
+        </div>
     </div>
 
     <script>
-        const dateSelect = document.getElementById('date');
+        const dateSelect = document.querySelector('.date');
         const today = new Date();
 
         // Gerar datas para quintas e domingos
@@ -41,41 +50,90 @@
             }
         }
 
-        const events = [];
+        document.getElementById('addSchedule').addEventListener('click', function() {
+            const container = document.getElementById('datesContainer');
+            const newSchedule = document.createElement('div');
+            newSchedule.classList.add('flex', 'space-x-4', 'mb-4');
+            newSchedule.innerHTML = `
+                <select class="date w-full p-2 border rounded" required>
+                    <option value="">Selecione uma data</option>
+                </select>
+                <select class="time w-full p-2 border rounded" required>
+                    <option value="">Selecione o horário</option>
+                    <option value="10:00">10h (Domingo)</option>
+                    <option value="19:00">19h (Domingo ou Quinta)</option>
+                </select>
+                <button type="button" class="removeButton text-red-500 p-2">Remover</button>
+            `;
+            container.appendChild(newSchedule);
+
+            // Recarregar as opções de data
+            const newDateSelect = newSchedule.querySelector('.date');
+            for (let i = 0; i < 60; i++) {
+                const nextDate = new Date();
+                nextDate.setDate(today.getDate() + i);
+                const day = nextDate.getDay();
+                if (day === 0 || day === 4) {
+                    const dateString = nextDate.toISOString().split('T')[0];
+                    const dayName = day === 0 ? 'Domingo' : 'Quinta-feira';
+                    newDateSelect.innerHTML += `<option value="${dateString}">${dayName} - ${dateString}</option>`;
+                }
+            }
+
+            // Remover botão
+            newSchedule.querySelector('.removeButton').addEventListener('click', function() {
+                newSchedule.remove();
+            });
+        });
 
         document.getElementById('scheduleForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value;
-            const date = document.getElementById('date').value;
-            const time = document.getElementById('time').value;
+            const dateSelects = document.querySelectorAll('.date');
+            const timeSelects = document.querySelectorAll('.time');
 
-            if (!name || !date || !time) {
+            if (!name || dateSelects.length === 0) {
                 alert('Preencha todos os campos!');
                 return;
             }
 
-            // Adiciona evento ao calendário
-            events.push({ title: name, start: `${date}T${time}` });
+            const events = [];
+            dateSelects.forEach((dateSelect, index) => {
+                const date = dateSelect.value;
+                const time = timeSelects[index].value;
+                if (date && time) {
+                    events.push({ title: name, start: `${date}T${time}` });
+                }
+            });
 
             // Atualizar o calendário
-            renderCalendar();
+            renderCalendar(events);
 
-            // Mensagem de confirmação
-            const message = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0AData: ${date}%0AHorário: ${time}.%0AConfirme, caso tudo esteja correto.`;
+            // Mensagem de confirmação para WhatsApp
+            let whatsappMessage = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0A`;
+            events.forEach(event => {
+                whatsappMessage += `%0AData: ${event.start.split('T')[0]} %0AHorário: ${event.start.split('T')[1]}`;
+            });
             const phone = '5511949814890'; // Substitua pelo número correto
-            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+            window.open(`https://wa.me/${phone}?text=${whatsappMessage}`, '_blank');
 
-            // Enviar confirmação por e-mail (usando o serviço de e-mail padrão do usuário)
+            // Enviar confirmação por e-mail usando mailto:
+            let emailBody = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso! Confira os detalhes abaixo:\n\n`;
+            events.forEach(event => {
+                emailBody += `Data: ${event.start.split('T')[0]}\nHorário: ${event.start.split('T')[1]}\n`;
+            });
             const subject = "Confirmação de Agendamento como Diácono";
-            const body = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso! Confira os detalhes abaixo:\n\nData: ${date}\nHorário: ${time}\n\nPor favor, confirme caso todos os dados estejam corretos.`;
-            const mailtoLink = `mailto:mikhaelmurtaribeiro@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.location.href = mailtoLink; // Isso abrirá o cliente de e-mail do usuário com o e-mail pronto para ser enviado
+            const mailtoLink = `mailto:mikhaelmurtaribeiro@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
+
+            // Exibir mensagem de agradecimento com emojis
+            document.getElementById('confirmationMessage').classList.remove('hidden');
 
             // Limpar o formulário
             this.reset();
         });
 
-        function renderCalendar() {
+        function renderCalendar(events) {
             const calendarEl = document.getElementById('calendar');
             calendarEl.innerHTML = '';
             const calendar = new FullCalendar.Calendar(calendarEl, {
