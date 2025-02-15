@@ -60,10 +60,16 @@
             // Atualizar o calendário
             renderCalendar();
 
-            // Enviar mensagem de confirmação no WhatsApp
+            // Mensagem de confirmação
             const message = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0AData: ${date}%0AHorário: ${time}.%0AConfirme, caso tudo esteja correto.`;
-            const phone = 'seu_numero_aqui'; // Substitua pelo número correto
+            const phone = '5511949814890'; // Substitua pelo número correto
             window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+
+            // Enviar confirmação por e-mail (usando o serviço de e-mail padrão do usuário)
+            const subject = "Confirmação de Agendamento como Diácono";
+            const body = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso! Confira os detalhes abaixo:\n\nData: ${date}\nHorário: ${time}\n\nPor favor, confirme caso todos os dados estejam corretos.`;
+            const mailtoLink = `mailto:mikhaelmurtaribeiro@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink; // Isso abrirá o cliente de e-mail do usuário com o e-mail pronto para ser enviado
 
             // Limpar o formulário
             this.reset();
