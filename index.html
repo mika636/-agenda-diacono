@@ -60,9 +60,9 @@
             // Atualizar o calendário
             renderCalendar();
 
-            // Enviar mensagem no WhatsApp
-            const message = `Olá! %0A${name} agendou-se como diácono para o culto em ${date} às ${time}.`;
-            const phone = '5511949814890'; // Substitua pelo número correto
+            // Enviar mensagem de confirmação no WhatsApp
+            const message = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0AData: ${date}%0AHorário: ${time}.%0AConfirme, caso tudo esteja correto.`;
+            const phone = 'seu_numero_aqui'; // Substitua pelo número correto
             window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
 
             // Limpar o formulário
