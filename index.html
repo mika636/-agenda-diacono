@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda de Diácono</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 </head>
 <body class="bg-gray-100 p-6">
     <div class="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md">
@@ -84,7 +85,7 @@
             });
         });
 
-        document.getElementById('scheduleForm').addEventListener('submit', async function(e) {
+        document.getElementById('scheduleForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value;
             const dateSelects = document.querySelectorAll('.date');
@@ -95,38 +96,37 @@
                 return;
             }
 
-            // Enviar os dados para o backend
-            const agendamentos = [];
+            // Mensagem de confirmação para WhatsApp
+            let whatsappMessage = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0A`;
             dateSelects.forEach((dateSelect, index) => {
                 const date = dateSelect.value;
                 const time = timeSelects[index].value;
                 if (date && time) {
-                    agendamentos.push({ name, date, time });
+                    whatsappMessage += `\nData: ${date}\nHorário: ${time}`;
                 }
             });
 
-            try {
-                const response = await fetch('http://localhost:3000/agendar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(agendamentos)
-                });
+            const phone = '5511949814890'; // Substitua pelo número correto
+            window.open(`https://wa.me/${phone}?text=${whatsappMessage}`, '_blank');
 
-                const result = await response.json();
-                if (result.message) {
-                    alert(result.message);
+            // Enviar confirmação por e-mail
+            let emailBody = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso! Confira os detalhes abaixo:\n\n`;
+            dateSelects.forEach((dateSelect, index) => {
+                const date = dateSelect.value;
+                const time = timeSelects[index].value;
+                if (date && time) {
+                    emailBody += `\nData: ${date}\nHorário: ${time}`;
                 }
+            });
+            const subject = "Confirmação de Agendamento como Diácono";
+            const mailtoLink = `mailto:mikhaelmurtaribeiro@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
 
-                // Exibir mensagem de agradecimento
-                document.getElementById('confirmationMessage').classList.remove('hidden');
-                
-                // Limpar o formulário
-                this.reset();
-            } catch (error) {
-                alert('Erro ao agendar!');
-            }
+            // Exibir mensagem de agradecimento com emojis
+            document.getElementById('confirmationMessage').classList.remove('hidden');
+
+            // Limpar o formulário
+            this.reset();
         });
     </script>
 </body>
