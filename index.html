@@ -6,29 +6,44 @@
     <title>Agenda de Diácono</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            background-image: url('/mnt/data/Imagem do WhatsApp de 2025-02-15 à(s) 17.45.21_9d1b3afa.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+        .button-relevo {
+            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        }
+        .titulo {
+            text-shadow: 2px 2px 4px #000;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 p-6">
-    <div class="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h2 class="text-2xl font-bold mb-4">Agendar Diácono</h2>
+    <div class="max-w-lg mx-auto bg-black bg-opacity-70 p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold mb-4 titulo">Agendar Diácono</h2>
         <form id="scheduleForm" class="space-y-4">
-            <input type="text" id="name" class="w-full p-2 border rounded" placeholder="Nome" required>
+            <input type="text" id="name" class="w-full p-2 border rounded text-black" placeholder="Nome" required>
             <div id="datesContainer">
                 <div class="flex space-x-4 mb-4">
-                    <select class="date w-full p-2 border rounded" required>
+                    <select class="date w-full p-2 border rounded text-black" required>
                         <option value="">Selecione uma data</option>
                     </select>
-                    <select class="time w-full p-2 border rounded" required>
+                    <select class="time w-full p-2 border rounded text-black" required>
                         <option value="">Selecione o horário</option>
-                        <option value="10:00">10h (Domingo)</option>
-                        <option value="19:00">19h (Domingo ou Quinta)</option>
+                        <option value="10:00">Culto Celebração - 10h (Domingo)</option>
+                        <option value="19:00">Culto Fé - 19h (Domingo ou Quinta)</option>
                     </select>
                     <button type="button" class="removeButton text-red-500 p-2">Remover</button>
                 </div>
             </div>
-            <button type="button" id="addSchedule" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Adicionar Novo Agendamento</button>
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mt-4">Agendar</button>
+            <button type="button" id="addSchedule" class="w-full bg-green-600 text-white p-2 rounded button-relevo hover:bg-green-700">Adicionar Novo Agendamento</button>
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded button-relevo hover:bg-blue-700 mt-4">Agendar</button>
         </form>
-        <div id="confirmationMessage" class="mt-4 text-center text-green-500 font-bold hidden">
+        <div id="confirmationMessage" class="mt-4 text-center text-green-400 font-bold hidden">
             Deus abençoa sua vida, pela dedicação! 🙏✨
         </div>
     </div>
@@ -37,14 +52,13 @@
         const dateSelect = document.querySelector('.date');
         const today = new Date();
 
-        // Gerar datas para quintas e domingos
         for (let i = 0; i < 60; i++) {
             const nextDate = new Date();
             nextDate.setDate(today.getDate() + i);
             const day = nextDate.getDay();
-            if (day === 0 || day === 4) { 
+            if (day === 0 || day === 4) {
                 const dateString = nextDate.toISOString().split('T')[0];
-                const dayName = day === 0 ? 'Domingo' : 'Quinta-feira';
+                const dayName = day === 0 ? 'Domingo - Culto Celebração' : 'Quinta-feira - Culto Fé';
                 dateSelect.innerHTML += `<option value="${dateString}">${dayName} - ${dateString}</option>`;
             }
         }
@@ -54,19 +68,18 @@
             const newSchedule = document.createElement('div');
             newSchedule.classList.add('flex', 'space-x-4', 'mb-4');
             newSchedule.innerHTML = `
-                <select class="date w-full p-2 border rounded" required>
+                <select class="date w-full p-2 border rounded text-black" required>
                     <option value="">Selecione uma data</option>
                 </select>
-                <select class="time w-full p-2 border rounded" required>
+                <select class="time w-full p-2 border rounded text-black" required>
                     <option value="">Selecione o horário</option>
-                    <option value="10:00">10h (Domingo)</option>
-                    <option value="19:00">19h (Domingo ou Quinta)</option>
+                    <option value="10:00">Culto Celebração - 10h (Domingo)</option>
+                    <option value="19:00">Culto Fé - 19h (Domingo ou Quinta)</option>
                 </select>
                 <button type="button" class="removeButton text-red-500 p-2">Remover</button>
             `;
             container.appendChild(newSchedule);
 
-            // Recarregar as opções de data
             const newDateSelect = newSchedule.querySelector('.date');
             for (let i = 0; i < 60; i++) {
                 const nextDate = new Date();
@@ -74,12 +87,11 @@
                 const day = nextDate.getDay();
                 if (day === 0 || day === 4) {
                     const dateString = nextDate.toISOString().split('T')[0];
-                    const dayName = day === 0 ? 'Domingo' : 'Quinta-feira';
+                    const dayName = day === 0 ? 'Domingo - Culto Celebração' : 'Quinta-feira - Culto Fé';
                     newDateSelect.innerHTML += `<option value="${dateString}">${dayName} - ${dateString}</option>`;
                 }
             }
 
-            // Remover botão
             newSchedule.querySelector('.removeButton').addEventListener('click', function() {
                 newSchedule.remove();
             });
@@ -96,36 +108,30 @@
                 return;
             }
 
-            // Mensagem de confirmação para WhatsApp
+            let scheduleData = 'Nome,Data,Horário\n';
             let whatsappMessage = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0A`;
+
             dateSelects.forEach((dateSelect, index) => {
                 const date = dateSelect.value;
                 const time = timeSelects[index].value;
                 if (date && time) {
+                    const dayName = new Date(date).getDay() === 0 ? 'Culto Celebração' : 'Culto Fé';
+                    scheduleData += `${name},${date},${dayName} - ${time}\n`;
                     whatsappMessage += `\nData: ${date}\nHorário: ${time}`;
                 }
             });
 
-            const phone = '5511949814890'; // Substitua pelo número correto
+            const blob = new Blob([scheduleData], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'agenda_diaconos.jpg';
+            a.click();
+
+            const phone = '5511949814890';
             window.open(`https://wa.me/${phone}?text=${whatsappMessage}`, '_blank');
 
-            // Enviar confirmação por e-mail
-            let emailBody = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso! Confira os detalhes abaixo:\n\n`;
-            dateSelects.forEach((dateSelect, index) => {
-                const date = dateSelect.value;
-                const time = timeSelects[index].value;
-                if (date && time) {
-                    emailBody += `\nData: ${date}\nHorário: ${time}`;
-                }
-            });
-            const subject = "Confirmação de Agendamento como Diácono";
-            const mailtoLink = `mailto:mikhaelmurtaribeiro@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-            window.location.href = mailtoLink;
-
-            // Exibir mensagem de agradecimento com emojis
             document.getElementById('confirmationMessage').classList.remove('hidden');
-
-            // Limpar o formulário
             this.reset();
         });
     </script>
