@@ -28,7 +28,6 @@
             <button type="button" id="addSchedule" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Adicionar Novo Agendamento</button>
             <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mt-4">Agendar</button>
         </form>
-        <div id="calendar" class="mt-6"></div>
         <div id="confirmationMessage" class="mt-4 text-center text-green-500 font-bold hidden">
             Deus abençoa sua vida, pela dedicação! 🙏✨
         </div>
@@ -97,31 +96,13 @@
                 return;
             }
 
-            const events = [];
-            dateSelects.forEach((dateSelect, index) => {
-                const date = dateSelect.value;
-                const time = timeSelects[index].value;
-                if (date && time) {
-                    events.push({ title: name, start: `${date}T${time}` });
-                }
-            });
-
-            // Atualizar o calendário
-            renderCalendar(events);
-
             // Mensagem de confirmação para WhatsApp
             let whatsappMessage = `Olá ${name}! %0ASeu agendamento como diácono foi realizado com sucesso!%0A`;
-            events.forEach(event => {
-                whatsappMessage += `%0AData: ${event.start.split('T')[0]} %0AHorário: ${event.start.split('T')[1]}`;
-            });
             const phone = '5511949814890'; // Substitua pelo número correto
             window.open(`https://wa.me/${phone}?text=${whatsappMessage}`, '_blank');
 
-            // Enviar confirmação por e-mail usando mailto:
-            let emailBody = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso! Confira os detalhes abaixo:\n\n`;
-            events.forEach(event => {
-                emailBody += `Data: ${event.start.split('T')[0]}\nHorário: ${event.start.split('T')[1]}\n`;
-            });
+            // Enviar confirmação por e-mail
+            let emailBody = `Olá ${name},\n\nSeu agendamento como diácono foi realizado com sucesso!`;
             const subject = "Confirmação de Agendamento como Diácono";
             const mailtoLink = `mailto:mikhaelmurtaribeiro@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
             window.location.href = mailtoLink;
@@ -132,17 +113,6 @@
             // Limpar o formulário
             this.reset();
         });
-
-        function renderCalendar(events) {
-            const calendarEl = document.getElementById('calendar');
-            calendarEl.innerHTML = '';
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                events: events
-            });
-            calendar.render();
-        }
     </script>
 </body>
 </html>
