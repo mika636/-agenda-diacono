@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Diácono</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold mb-4">Agendar Diácono</h2>
+        <form id="scheduleForm" class="space-y-4">
+            <input type="text" id="name" class="w-full p-2 border rounded" placeholder="Nome" required>
+            <select id="date" class="w-full p-2 border rounded" required>
+                <option value="">Selecione uma data</option>
+            </select>
+            <select id="time" class="w-full p-2 border rounded" required>
+                <option value="">Selecione o horário</option>
+                <option value="10:00">10h (Domingo)</option>
+                <option value="19:00">19h (Domingo ou Quinta)</option>
+            </select>
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Agendar</button>
+        </form>
+        <div id="calendar" class="mt-6"></div>
+    </div>
+
+    <script>
+        const dateSelect = document.getElementById('date');
+        const today = new Date();
+
+        // Gerar datas para quintas e domingos
+        for (let i = 0; i < 60; i++) {
+            const nextDate = new Date();
+            nextDate.setDate(today.getDate() + i);
+            const day = nextDate.getDay();
+            if (day === 0 || day === 4) { 
+                const dateString = nextDate.toISOString().split('T')[0];
+                const dayName = day === 0 ? 'Domingo' : 'Quinta-feira';
+                dateSelect.innerHTML += `<option value="${dateString}">${dayName} - ${dateString}</option>`;
+            }
+        }
+
+        const events = [];
+
+        document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+
+            if (!name || !date || !time) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            // Adiciona evento ao calendário
+            events.push({ title: name, start: `${date}T${time}` });
+
+            // Atualizar o calendário
+            renderCalendar();
+
+            // Enviar mensagem no WhatsApp
+            const message = `Olá! %0A${name} agendou-se como diácono para o culto em ${date} às ${time}.`;
+            const phone = '+5511949814890'; // Substitua pelo número correto
+            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+
+            // Limpar o formulário
+            this.reset();
+        });
+
+        function renderCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendarEl.innerHTML = '';
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                events: events
+            });
+            calendar.render();
+        }
+    </script>
+</body>
+</html>
