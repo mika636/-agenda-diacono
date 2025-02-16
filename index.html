@@ -106,6 +106,8 @@
             // Mensagem personalizada
             const mensagem = `Agendamento de Diácono:\n\nOlá, gostaria de agendar a participação de um diácono para os seguintes horários:\n\n- Nome: ${name}\n- Detalhes:\n${details}\nAgradeço desde já pela atenção e que Deus abençoe o trabalho de todos! 🙏✨`;
 
+            console.log(mensagem); // Verifique no console se a mensagem está correta
+
             // Enviar por e-mail
             enviarEmail(name, mensagem);
             
@@ -116,7 +118,7 @@
         });
 
         function enviarWhatsApp(mensagem) {
-            const numeroWhatsapp = "55<11949814890>"; // Substitua pelo número do WhatsApp
+            const numeroWhatsapp = "5511949814890"; // Substitua pelo número do WhatsApp
             const urlWhatsApp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
             
             // Redireciona para o WhatsApp com a mensagem
