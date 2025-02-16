@@ -103,40 +103,38 @@
                 }
             });
 
-            // Mensagem personalizada
-            const mensagem = `Agendamento de Diácono:\n\nOlá, gostaria de agendar a participação de um diácono para os seguintes horários:\n\n- Nome: ${name}\n- Detalhes:\n${details}\nAgradeço desde já pela atenção e que Deus abençoe o trabalho de todos! 🙏✨`;
+            // Data e hora do envio
+            const now = new Date();
+            const dateTime = now.toLocaleString('pt-BR'); // Formato brasileiro
 
-            console.log(mensagem); // Verifique no console se a mensagem está correta
-
-            // Enviar por e-mail
-            enviarEmail(name, mensagem);
-            
-            // Enviar por WhatsApp
-            enviarWhatsApp(mensagem);
-
-            document.getElementById('confirmationMessage').classList.remove('hidden');
-        });
-
-        function enviarWhatsApp(mensagem) {
-            const numeroWhatsapp = "5511949814890"; // Substitua pelo número do WhatsApp
-            const urlWhatsApp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
-            
-            // Redireciona para o WhatsApp com a mensagem
-            window.open(urlWhatsApp, "_blank");
-        }
-
-        function enviarEmail(nome, mensagem) {
+            // Dados para o EmailJS
             const templateParams = {
-                name: nome,
-                message: mensagem
+                name: name,
+                details: details,
+                date: dateTime // Adiciona a data e hora do envio
             };
 
+            // Enviar por e-mail
             emailjs.send('service_cryctto', 'template_yxwizhi', templateParams)
                 .then(function(response) {
                     console.log('E-mail enviado com sucesso!', response.status, response.text);
                 }, function(error) {
                     console.error('Erro ao enviar o e-mail:', error);
                 });
+
+            // Enviar por WhatsApp
+            const mensagem = `Agendamento de Diácono:\n\nOlá, gostaria de agendar a participação de um diácono para os seguintes horários:\n\n- Nome: ${name}\n- Detalhes:\n${details}\nAgradeço desde já pela atenção e que Deus abençoe o trabalho de todos! 🙏✨`;
+            enviarWhatsApp(mensagem);
+
+            document.getElementById('confirmationMessage').classList.remove('hidden');
+        });
+
+        function enviarWhatsApp(mensagem) {
+            const numeroWhatsapp = "5511949014890"; // Substitua pelo número do WhatsApp
+            const urlWhatsApp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
+            
+            // Redireciona para o WhatsApp com a mensagem
+            window.open(urlWhatsApp, "_blank");
         }
 
         emailjs.init('f2h25okyI3kePhaGQ');
