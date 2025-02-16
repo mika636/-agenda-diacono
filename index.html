@@ -99,19 +99,34 @@
                 const date = dateSelect.value;
                 const time = timeSelects[index].value;
                 if (date && time) {
-                    details += `Data: ${date}, Horário: ${time}\n`;
+                    details += `- Data: ${date}, Horário: ${time}\n`;
                 }
             });
 
-            enviarEmail(name, details);
+            // Mensagem personalizada
+            const mensagem = `Agendamento de Diácono:\n\nOlá, gostaria de agendar a participação de um diácono para os seguintes horários:\n\n- Nome: ${name}\n- Detalhes:\n${details}\nAgradeço desde já pela atenção e que Deus abençoe o trabalho de todos! 🙏✨`;
+
+            // Enviar por e-mail
+            enviarEmail(name, mensagem);
+            
+            // Enviar por WhatsApp
+            enviarWhatsApp(mensagem);
 
             document.getElementById('confirmationMessage').classList.remove('hidden');
         });
 
-        function enviarEmail(nome, detalhes) {
+        function enviarWhatsApp(mensagem) {
+            const numeroWhatsapp = "55<11949814890>"; // Substitua pelo número do WhatsApp
+            const urlWhatsApp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
+            
+            // Redireciona para o WhatsApp com a mensagem
+            window.open(urlWhatsApp, "_blank");
+        }
+
+        function enviarEmail(nome, mensagem) {
             const templateParams = {
                 name: nome,
-                details: detalhes
+                message: mensagem
             };
 
             emailjs.send('service_cryctto', 'template_yxwizhi', templateParams)
