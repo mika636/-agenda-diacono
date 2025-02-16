@@ -114,6 +114,8 @@
                 date: dateTime // Adiciona a data e hora do envio
             };
 
+            console.log("Dados enviados para o EmailJS:", templateParams); // Depuração
+
             // Enviar por e-mail
             emailjs.send('service_cryctto', 'template_yxwizhi', templateParams)
                 .then(function(response) {
@@ -130,7 +132,7 @@
         });
 
         function enviarWhatsApp(mensagem) {
-            const numeroWhatsapp = "5511949014890"; // Substitua pelo número do WhatsApp
+            const numeroWhatsapp = "55<NUMERO_DO_WHATSAPP>"; // Substitua pelo número do WhatsApp
             const urlWhatsApp = `https://wa.me/${numeroWhatsapp}?text=${encodeURIComponent(mensagem)}`;
             
             // Redireciona para o WhatsApp com a mensagem
